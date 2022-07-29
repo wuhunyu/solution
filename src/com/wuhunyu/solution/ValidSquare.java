@@ -17,7 +17,7 @@ public class ValidSquare {
     }
 
     private boolean doValidSquare(int[] p1, int[] p2, int[] p3, int[] p4) {
-        // 点是否重合重合
+        // 点是否重合
         if (p1[0] == p3[0] && p1[1] == p3[1] || p2[0] == p4[0] && p2[1] == p4[1]) {
             return false;
         }
