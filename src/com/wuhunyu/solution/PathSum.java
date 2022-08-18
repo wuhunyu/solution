@@ -12,31 +12,36 @@ import com.wuhunyu.domain.tree_node.TreeNode;
 
 public class PathSum {
 
-    public int pathSum(TreeNode root, int targetSum) {
-        if (root == null) {
-            return 0;
-        }
+    private int count = 0;
 
-        int ret = rootSum(root, targetSum);
-        ret += pathSum(root.left, targetSum);
-        ret += pathSum(root.right, targetSum);
-        return ret;
+    public int pathSum(TreeNode root, int targetSum) {
+        this.dfs(root, targetSum);
+        return count;
     }
 
-    public int rootSum(TreeNode root, int targetSum) {
-        int ret = 0;
-
-        if (root == null) {
-            return 0;
+    private void dfs(TreeNode node, int targetSum) {
+        if (node == null) {
+            return;
         }
-        int val = root.val;
-        if (val == targetSum) {
-            ret++;
-        }
+        this.singlePathSum(node, 0L, targetSum);
+        this.dfs(node.left, targetSum);
+        this.dfs(node.right, targetSum);
+    }
 
-        ret += rootSum(root.left, targetSum - val);
-        ret += rootSum(root.right, targetSum - val);
-        return ret;
+    private void singlePathSum(TreeNode node, long sum, int targetSum) {
+        if (node == null) {
+            return;
+        }
+        sum += node.val;
+        if (sum == targetSum) {
+            count++;
+        }
+        if (node.left != null) {
+            this.singlePathSum(node.left, sum, targetSum);
+        }
+        if (node.right != null) {
+            this.singlePathSum(node.right, sum, targetSum);
+        }
     }
 
     public static void main(String[] args) {
