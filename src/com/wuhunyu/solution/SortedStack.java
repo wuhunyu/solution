@@ -1,6 +1,7 @@
 package com.wuhunyu.solution;
 
-import java.util.PriorityQueue;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * 面试题 03.05. 栈排序
@@ -12,29 +13,40 @@ import java.util.PriorityQueue;
 
 public class SortedStack {
 
-    private final PriorityQueue<Integer> priorityQueue;
+    private final Deque<Integer> stack;
+
+    private final Deque<Integer> tmpStack;
 
     public SortedStack() {
-        priorityQueue = new PriorityQueue<>((num1, num2) -> num1 - num2);
+        stack = new ArrayDeque<>();
+        tmpStack = new ArrayDeque<>();
     }
 
     public void push(int val) {
-        priorityQueue.offer(val);
+        while (!stack.isEmpty() && stack.peek() < val) {
+            tmpStack.push(stack.pop());
+        }
+        stack.push(val);
+        while (!tmpStack.isEmpty()) {
+            stack.push(tmpStack.pop());
+        }
     }
 
     public void pop() {
-        priorityQueue.poll();
+        if (!stack.isEmpty()) {
+            stack.pop();
+        }
     }
 
     public int peek() {
-        if (priorityQueue.isEmpty()) {
+        if (stack.isEmpty()) {
             return -1;
         }
-        return priorityQueue.peek();
+        return stack.peek();
     }
 
     public boolean isEmpty() {
-        return priorityQueue.isEmpty();
+        return stack.isEmpty();
     }
 
 }
