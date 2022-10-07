@@ -63,4 +63,10 @@ public class TreeNode {
         return root;
     }
 
+    @Override
+    public String toString() {
+        return "TreeNode{" +
+                "val=" + val +
+                '}';
+    }
 }
