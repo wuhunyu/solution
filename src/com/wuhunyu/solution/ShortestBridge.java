@@ -1,6 +1,7 @@
 package com.wuhunyu.solution;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 /**
  * 934. 最短的桥
@@ -15,70 +16,76 @@ public class ShortestBridge {
     public int shortestBridge(int[][] grid) {
         int rLen = grid.length;
         int cLen = grid[0].length;
-        int zeroCount = 0;
-        List<Integer>[] lists = new List[2];
-        Set<Integer> set = new HashSet<>();
-        for (int r = 0; r < rLen; r++) {
-            for (int c = 0; c < cLen; c++) {
-                int sum = r * cLen + c;
-                if (grid[r][c] == 1 && !set.contains(sum)) {
-                    lists[zeroCount] = new ArrayList<>();
-                    this.dfs(r, c, grid, set, lists[zeroCount]);
-                    zeroCount++;
-                }
-                if (zeroCount == 2) {
+        int r = 0;
+        int c = 0;
+        boolean isContinue = true;
+        for (; r < rLen; r++) {
+            c = 0;
+            for (; c < cLen; c++) {
+                if (grid[r][c] == 1) {
+                    isContinue = false;
                     break;
                 }
             }
-        }
-        List<Integer> list1 = lists[0];
-        List<Integer> list2 = lists[1];
-        int min = Integer.MAX_VALUE;
-        for (Integer li1 : list1) {
-            int li1Row = li1 / cLen;
-            int li1Col = li1 % cLen;
-            for (Integer li2 : list2) {
-                int li2Row = li2 / cLen;
-                int li2Col = li2 % cLen;
-                min = Math.min(min, Math.abs(li1Row - li2Row) + Math.abs(li1Col - li2Col) - 1);
+            if (!isContinue) {
+                break;
             }
         }
-        return min;
-    }
-
-    private void dfs(int row, int col, int[][] grid, Set<Integer> uniqueNum, List<Integer> list) {
         int[] rows = {-1, 0, 1, 0};
         int[] cols = {0, 1, 0, -1};
+        Queue<int[]> queue = new ArrayDeque<>();
+        this.dye(grid, rows, cols, r, c, queue);
+        return this.bfs(grid, rows, cols, queue);
+    }
+
+    private void dye(int[][] grid, int[] rows, int[] cols, int row, int col, Queue<int[]> queue) {
         int rLen = grid.length;
         int cLen = grid[0].length;
-        Queue<Integer> queue = new ArrayDeque<>();
-        Set<Integer> set = new HashSet<>();
-        queue.offer(row * cLen + col);
-        while (!queue.isEmpty()) {
-            Integer sum = queue.poll();
-            int curRow = sum / cLen;
-            int curCol = sum % cLen;
-            boolean flag = true;
+        Queue<int[]> curQueue = new ArrayDeque<>();
+        curQueue.offer(new int[] {row, col});
+        while (!curQueue.isEmpty()) {
+            int[] arr = curQueue.poll();
+            grid[arr[0]][arr[1]] = -1;
             for (int i = 0; i < 4; i++) {
-                int newRow = curRow + rows[i];
-                int newCol = curCol + cols[i];
-                if (newRow >= 0 && newRow < rLen && newCol >= 0 && newCol < cLen && grid[newRow][newCol] == 1) {
-                    int newSum = newRow * cLen + newCol;
-                    if (set.contains(newSum)) {
-                        flag = false;
-                        continue;
+                int newRow = arr[0] + rows[i];
+                int newCol = arr[1] + cols[i];
+                if (newRow >= 0 && newRow < rLen && newCol >= 0 && newCol < cLen) {
+                    if (grid[newRow][newCol] == 0) {
+                        grid[newRow][newCol] = -1;
+                        queue.offer(new int[] {newRow, newCol});
+                    } else if (grid[newRow][newCol] == 1) {
+                        grid[newRow][newCol] = -1;
+                        curQueue.offer(new int[] {newRow, newCol});
                     }
-                    set.add(newSum);
-                    uniqueNum.add(newSum);
-                    queue.offer(newSum);
-                } else {
-                    flag = false;
                 }
             }
-            if (!flag) {
-                list.add(sum);
+        }
+    }
+
+    private int bfs(int[][] grid, int[] rows, int[] cols, Queue<int[]> queue) {
+        int rLen = grid.length;
+        int cLen = grid[0].length;
+        int depth = 0;
+        while (!queue.isEmpty()) {
+            depth++;
+            int size = queue.size();
+            while (size-- > 0) {
+                int[] arr = queue.poll();
+                for (int i = 0; i < 4; i++) {
+                    int newRow = arr[0] + rows[i];
+                    int newCol = arr[1] + cols[i];
+                    if (newRow >= 0 && newRow < rLen && newCol >= 0 && newCol < cLen) {
+                        if (grid[newRow][newCol] == 0) {
+                            grid[newRow][newCol] = -1;
+                            queue.offer(new int[] {newRow, newCol});
+                        } else if (grid[newRow][newCol] == 1) {
+                            return depth;
+                        }
+                    }
+                }
             }
         }
+        return depth;
     }
 
     public static void main(String[] args) {
@@ -86,6 +93,13 @@ public class ShortestBridge {
 
         System.out.println(shortestBridge.shortestBridge(new int[][] {{0, 1}, {1, 0}}));
         System.out.println(shortestBridge.shortestBridge(new int[][] {{0, 1, 0}, {0, 0, 0}, {0, 0, 1}}));
+        System.out.println(shortestBridge.shortestBridge(new int[][] {{0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0}, {0, 0, 1, 1, 0, 0, 1, 1}, {0, 0, 0, 1, 1, 0, 0, 1},
+            {0, 0, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}));
+        System.out.println(shortestBridge.shortestBridge(new int[][] {{0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 1, 0}, {0, 0, 1, 1, 0, 0, 1, 1}, {0, 0, 0, 1, 1, 0, 0, 1},
+            {0, 0, 1, 1, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}}));
+
     }
 
 }
