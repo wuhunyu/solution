@@ -1,7 +1,7 @@
 package com.wuhunyu.solution;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * 232. 用栈实现队列
@@ -13,26 +13,41 @@ import java.util.Queue;
 
 public class MyQueue {
 
-    private final Queue<Integer> queue;
+    private final Deque<Integer> inStack;
+
+    private final Deque<Integer> outStack;
 
     public MyQueue() {
-        queue = new LinkedList<>();
+        inStack = new ArrayDeque<>();
+        outStack = new ArrayDeque<>();
     }
 
     public void push(int x) {
-        queue.offer(x);
+        inStack.push(x);
     }
 
     public int pop() {
-        return queue.poll();
+        if (outStack.isEmpty()) {
+            this.in2Out();
+        }
+        return outStack.pop();
     }
 
     public int peek() {
-        return queue.peek();
+        if (outStack.isEmpty()) {
+            this.in2Out();
+        }
+        return outStack.peek();
     }
 
     public boolean empty() {
-        return queue.isEmpty();
+        return inStack.isEmpty() && outStack.isEmpty();
+    }
+
+    private void in2Out() {
+        while (!inStack.isEmpty()) {
+            outStack.push(inStack.pop());
+        }
     }
 
     public static void main(String[] args) {
