@@ -23,11 +23,13 @@ public class SelectionSort implements ArrSort {
     private void selectionSort(int[] arr) {
         int len = arr.length;
         for (int i = 0; i < len; i++) {
+            int minIndex = i;
             for (int j = i + 1; j < len; j++) {
-                if (arr[i] > arr[j]) {
-                    this.swap(arr, i, j);
+                if (arr[minIndex] > arr[j]) {
+                    minIndex = j;
                 }
             }
+            this.swap(arr, i, minIndex);
         }
     }
 
