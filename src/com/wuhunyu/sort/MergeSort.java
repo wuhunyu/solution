@@ -31,6 +31,9 @@ public class MergeSort implements ArrSort {
     }
 
     private void mergeArr(int[] arr, int left1, int right1, int left2, int right2) {
+        if (arr[right1] <= arr[left2]) {
+            return;
+        }
         int len = right2 - left1 + 1;
         int[] tmpArr = new int[len];
         int index1 = left1;
