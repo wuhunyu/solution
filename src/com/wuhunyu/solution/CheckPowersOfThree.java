@@ -32,9 +32,7 @@ public class CheckPowersOfThree {
         int right = limit;
         while (left < right) {
             int mid = ((right - left + 1) >> 1) + left;
-            if (arr[mid] == target) {
-                return mid;
-            } else if (arr[mid] > target) {
+            if (arr[mid] > target) {
                 right = mid - 1;
             } else {
                 left = mid;
