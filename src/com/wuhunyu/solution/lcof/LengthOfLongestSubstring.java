@@ -35,10 +35,4 @@ public class LengthOfLongestSubstring {
         return max;
     }
 
-    public static void main(String[] args) {
-        LengthOfLongestSubstring lengthOfLongestSubstring = new LengthOfLongestSubstring();
-
-        System.out.println(lengthOfLongestSubstring.lengthOfLongestSubstring("dvdf"));
-    }
-
 }
